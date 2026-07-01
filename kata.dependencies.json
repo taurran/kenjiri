@@ -1,0 +1,52 @@
+{
+  "dependencies": [
+    {
+      "name": "pygame-ce",
+      "type": "library",
+      "purpose": "render/input/audio engine (D1)",
+      "source": "PyPI - maintained community fork of pygame",
+      "manager": "uv",
+      "package": "pygame-ce",
+      "version": "2.5.7",
+      "scope": "project-local",
+      "classification": "runtime",
+      "verifyImport": "pygame"
+    },
+    {
+      "name": "numpy",
+      "type": "library",
+      "purpose": "build-time chiptune synthesis (D11)",
+      "source": "PyPI - canonical",
+      "manager": "uv",
+      "package": "numpy",
+      "version": "2.5.0",
+      "scope": "project-local",
+      "classification": "build-time",
+      "verifyImport": "numpy"
+    },
+    {
+      "name": "pytest",
+      "type": "tool",
+      "purpose": "test suite (D17)",
+      "source": "PyPI - canonical",
+      "manager": "uv",
+      "package": "pytest",
+      "version": "9.1.1",
+      "scope": "project-local",
+      "classification": "build-time",
+      "verifyImport": "pytest"
+    },
+    {
+      "name": "pyinstaller",
+      "type": "tool",
+      "purpose": "exe packaging (D1/D26)",
+      "source": "PyPI - canonical",
+      "manager": "uv",
+      "package": "pyinstaller",
+      "version": "6.21.0",
+      "scope": "project-local",
+      "classification": "build-time",
+      "verifyImport": "PyInstaller"
+    }
+  ]
+}
