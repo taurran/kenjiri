@@ -1,0 +1,14 @@
+{
+  "files": {
+    "music/gameover.wav": "8908a904a64af20d41d2af1021e3d1086aa314d9759c431dccd5320358e21070",
+    "music/gameplay.wav": "01f31aa383b35af122768a6f39055582ca70d69a8482cff89b0201f9796fc350",
+    "music/title.wav": "a448d5ffd5592409f5c95a51adb7b6af3e4e6f7e85e007d85f89ccc81861cb45",
+    "sfx/clear.wav": "5939c393ce143f40db1a2463589565b56b11722a16c9e8fa2f86b4cc545899ac",
+    "sfx/gameover.wav": "f10e91e0fdbb0e56dd71ed19210ba5c4dbd53c5ea43919a69f237a0f823b29c9",
+    "sfx/harddrop.wav": "b2ff55f9d2ada3bc6dc2c2b586fd8c811d9dc688372567d57a66d1bffb0f22b3",
+    "sfx/kenjiri.wav": "31ad9db7ed30ffc805862b2ad12467b759ccefa0c1270517af6ca3ca37ca6c32",
+    "sfx/levelup.wav": "70d4b1d5480e1329d6a8a34dfaa01a83014214058fcae3e26accf05faa5cad7f",
+    "sfx/lock.wav": "0bf827d96158c1fce62cf05454a6fb10863ea1dcbaaea2b2b1b44b6faa78ac9b",
+    "sfx/menu.wav": "2b14ae1aba0b546f68c07e4bedfaf6d849e07c90254bf928558d20cdb3472eed"
+  }
+}
