@@ -581,12 +581,28 @@ class TestFullSimulation:
                     assert d.game.board.cell(col, row) is None
 
     def test_no_pygame_import_anywhere_in_game_package(self) -> None:
-        import kenjiri.game.bag  # noqa: F401
-        import kenjiri.game.board  # noqa: F401
-        import kenjiri.game.gravity  # noqa: F401
-        import kenjiri.game.inputmap  # noqa: F401
-        import kenjiri.game.pieces  # noqa: F401
-        import kenjiri.game.scoring  # noqa: F401
-        import kenjiri.game.state  # noqa: F401
+        """game/ stays pure: no module in the package imports pygame.
 
-        assert "pygame" not in sys.modules
+        Checked statically via AST — a bare ``"pygame" not in sys.modules``
+        assertion is environment-dependent (other packages' test fixtures
+        import pygame legitimately in the merged suite).
+        """
+        import ast
+        import pathlib
+
+        import kenjiri.game.state
+
+        game_dir = pathlib.Path(kenjiri.game.state.__file__).parent
+        for source in sorted(game_dir.glob("*.py")):
+            tree = ast.parse(source.read_text(encoding="utf-8"))
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Import):
+                    names = [alias.name for alias in node.names]
+                elif isinstance(node, ast.ImportFrom):
+                    names = [node.module or ""]
+                else:
+                    continue
+                for name in names:
+                    assert not name.startswith("pygame"), (
+                        f"{source.name} imports pygame - game/ must stay pure"
+                    )
