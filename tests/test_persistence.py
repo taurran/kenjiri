@@ -90,6 +90,65 @@ def test_unresolvable_logs_once(caplog: pytest.LogCaptureFixture) -> None:
     assert len(warnings) == 1
 
 
+# ----------------------------------------------------- paths (macOS/darwin)
+
+_DARWIN_ONLY = pytest.mark.skipif(
+    sys.platform != "darwin", reason="macOS Application Support resolver (darwin only)"
+)
+
+
+def _darwin_env(tmp_path: Path) -> dict[str, str]:
+    """Injected env dict pointing HOME at tmp_path (macOS resolver)."""
+    return {"HOME": str(tmp_path)}
+
+
+@_DARWIN_ONLY
+def test_darwin_data_dir_uses_application_support(tmp_path: Path) -> None:
+    result = paths.data_dir(_darwin_env(tmp_path))
+    expected = tmp_path / "Library" / "Application Support" / "Kenjiri"
+    assert result == expected
+    assert result.is_dir()
+
+
+@_DARWIN_ONLY
+def test_darwin_db_and_log_paths_under_data_dir(tmp_path: Path) -> None:
+    root = tmp_path / "Library" / "Application Support" / "Kenjiri"
+    assert paths.db_path(_darwin_env(tmp_path)) == root / "kenjiri.db"
+    assert paths.log_path(_darwin_env(tmp_path)) == root / "kenjiri.log"
+
+
+@_DARWIN_ONLY
+def test_darwin_missing_home_returns_none(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    sandbox = tmp_path / "cwd"
+    sandbox.mkdir()
+    monkeypatch.chdir(sandbox)
+    assert paths.data_dir({}) is None
+    assert paths.data_dir({"HOME": ""}) is None
+    # D28 negative: never fall back to a relative/CWD path.
+    assert list(sandbox.iterdir()) == []
+
+
+@_DARWIN_ONLY
+def test_darwin_relative_home_never_falls_back_to_cwd(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    sandbox = tmp_path / "cwd"
+    sandbox.mkdir()
+    monkeypatch.chdir(sandbox)
+    assert paths.data_dir({"HOME": "relative/home"}) is None
+    assert paths.data_dir({"HOME": "."}) is None
+    assert list(sandbox.iterdir()) == []
+
+
+@_DARWIN_ONLY
+def test_darwin_unwritable_base_returns_none(tmp_path: Path) -> None:
+    blocker = tmp_path / "home-as-file"
+    blocker.write_text("file, not directory", encoding="utf-8")
+    assert paths.data_dir({"HOME": str(blocker)}) is None
+
+
 # ---------------------------------------------------------------- applog
 
 
