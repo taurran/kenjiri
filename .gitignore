@@ -6,3 +6,4 @@ dist/
 .worktrees/
 .kata/
 .firecrawl/
+*.egg-info/
