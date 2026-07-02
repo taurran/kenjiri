@@ -1,10 +1,16 @@
 # Kenjiri
 
-> ## 🎮 [⬇ Download kenjiri.exe — just double-click and play](https://github.com/taurran/kenjiri/releases/latest/download/kenjiri.exe)
+> ## 🎮 Download & play — Windows & macOS
 >
-> **One file. No install, no Python, nothing else.** Windows x64.
-> SmartScreen will warn on an unsigned exe — click *More info → Run anyway*.
-> First launch takes ~2 s to unpack. ([All releases](https://github.com/taurran/kenjiri/releases))
+> **No install, no Python, nothing else.**
+>
+> **Windows x64:** [⬇ kenjiri.exe](https://github.com/taurran/kenjiri/releases/latest/download/kenjiri.exe) — just double-click and play.
+> SmartScreen will warn on an unsigned exe — click *More info → Run anyway*. First launch takes ~2 s to unpack.
+>
+> **macOS (Apple Silicon):** [⬇ kenjiri.dmg](https://github.com/taurran/kenjiri/releases/latest/download/kenjiri.dmg) — open the disk image and drag **Kenjiri** to Applications.
+> The app is unsigned, so on first launch **right-click → Open**, then confirm (same posture as Windows SmartScreen; notarization is out of scope).
+>
+> ([All releases](https://github.com/taurran/kenjiri/releases))
 
 A corgi-themed, NES-style falling-block puzzle for Windows — built end-to-end
 as a **KataHarness one-shot showcase** (frozen decision ledger, parallel
@@ -46,7 +52,9 @@ Level advances every 10 lines. Score is awarded at lock using the level
 
 ## Build
 
-Requires Python 3.12 via [uv](https://docs.astral.sh/uv/) on Windows.
+Requires Python 3.12 via [uv](https://docs.astral.sh/uv/).
+
+**Windows:**
 
 ```
 uv sync --all-groups
@@ -57,6 +65,20 @@ uv run pyinstaller kenjiri.spec --noconfirm
 
 Run the result: `dist/kenjiri.exe` (or dev-run with `uv run python -m kenjiri`;
 `--smoke` performs a headless self-check and exits 0).
+
+**macOS (Apple Silicon):**
+
+```
+uv sync --all-groups
+uv run python tools/make_assets.py
+uv run python tools/make_icon.py --icns
+uv run pyinstaller kenjiri-mac.spec --noconfirm
+```
+
+Run the result: `dist/Kenjiri.app` (smoke-check with
+`./dist/Kenjiri.app/Contents/MacOS/kenjiri --smoke`). Package for
+distribution with
+`hdiutil create -volname Kenjiri -srcfolder dist/Kenjiri.app -ov -format UDZO dist/kenjiri.dmg`.
 
 ### Build notes
 
@@ -73,15 +95,26 @@ Run the result: `dist/kenjiri.exe` (or dev-run with `uv run python -m kenjiri`;
   differ, so the icon is deterministic.
   - `assets/icon.ico` sha256:
     `e6beb2e5333748cdcc8310ebbb14d65396f4cc79fd37aad6dd3e2dc014e94d89`
+  - On macOS, `tools/make_icon.py --icns` emits `assets/icon.icns` from the
+    same corgi art (hand-assembled PNG-payload ICNS container, likewise
+    rendered twice and compared for determinism).
 - **Exe metadata:** onefile, no console window, version 1.0.0, product name
   "Kenjiri" (defined inline in `kenjiri.spec`).
+- **macOS app metadata:** `kenjiri-mac.spec` wraps the same onefile build in a
+  `Kenjiri.app` bundle (`bundle_identifier` `ai.kataharness.kenjiri`,
+  `CFBundleShortVersionString` 1.0.0, high-resolution capable). No Windows
+  version resource is used on macOS.
 
 ## High scores & logs
 
-- High score: `%LOCALAPPDATA%\Kenjiri\kenjiri.db` (SQLite, single TOP record).
-- Log file: `%LOCALAPPDATA%\Kenjiri\kenjiri.log` (append; truncated above 1 MB).
+- High score: `%LOCALAPPDATA%\Kenjiri\kenjiri.db` (Windows) /
+  `~/Library/Application Support/Kenjiri/kenjiri.db` (macOS) — SQLite, single
+  TOP record.
+- Log file: `%LOCALAPPDATA%\Kenjiri\kenjiri.log` (Windows) /
+  `~/Library/Application Support/Kenjiri/kenjiri.log` (macOS) — append;
+  truncated above 1 MB.
 
-If `%LOCALAPPDATA%` is unresolvable or the DB is locked/unwritable, the game
+If the data directory is unresolvable or the DB is locked/unwritable, the game
 plays on without persistence (session-best TOP) — it never falls back to a
 relative path and never crashes over storage.
 
