@@ -12,7 +12,7 @@
 >
 > ([All releases](https://github.com/taurran/kenjiri/releases))
 
-A corgi-themed, NES-style falling-block puzzle for Windows — built end-to-end
+A corgi-themed, NES-style falling-block puzzle for Windows & macOS — built end-to-end
 as a **KataHarness one-shot showcase** (frozen decision ledger, parallel
 worker waves, adversarial gates): **spec → playable, tested, packaged game in
 about an hour**, 230 tests, zero plan drift. Modern guideline mechanics
