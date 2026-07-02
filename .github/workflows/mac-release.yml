@@ -1,0 +1,47 @@
+name: mac-release
+
+# Builds Kenjiri.app on an Apple-Silicon runner and uploads kenjiri.dmg to an
+# existing release. Manually triggered; tag defaults to v1.0.0.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing release tag to upload the dmg to"
+        required: true
+        default: "v1.0.0"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-upload:
+    runs-on: macos-14 # Apple Silicon (arm64)
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Sync locked environment (Python 3.12 via .python-version)
+        run: uv sync --all-groups
+
+      - name: Test suite (default-FAIL)
+        run: uv run pytest tests/ -q
+
+      - name: Render icns icon
+        run: uv run python tools/make_icon.py --icns
+
+      - name: Build Kenjiri.app
+        run: uv run pyinstaller kenjiri-mac.spec --noconfirm
+
+      - name: Smoke-check the app (headless)
+        run: SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy ./dist/Kenjiri.app/Contents/MacOS/kenjiri --smoke
+
+      - name: Package dmg
+        run: hdiutil create -volname Kenjiri -srcfolder dist/Kenjiri.app -ov -format UDZO dist/kenjiri.dmg
+
+      - name: Upload dmg to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ inputs.tag }}" dist/kenjiri.dmg --clobber
+          gh release view "${{ inputs.tag }}" --json assets --jq '[.assets[].name]'
