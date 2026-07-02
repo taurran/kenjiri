@@ -391,10 +391,16 @@ def main() -> int:
         "--out", type=Path, default=_TOOLS_DIR.parent / "assets",
         help="output directory (default: <repo>/assets)")
     args = parser.parse_args()
-    manifest = build(args.out)
+    # CWE-23 guard: canonicalize the CLI-supplied output dir and refuse
+    # traversal segments before any file is written under it.
+    out_dir = args.out
+    if any(part == ".." for part in out_dir.parts):
+        parser.error("--out must not contain '..' path segments")
+    out_dir = out_dir.resolve()
+    manifest = build(out_dir)
     for rel, digest in sorted(manifest["files"].items()):
         print(f"{digest[:16]}  {rel}")
-    print(f"wrote {len(manifest['files'])} assets + manifest.json -> {args.out}")
+    print(f"wrote {len(manifest['files'])} assets + manifest.json -> {out_dir}")
     return 0
 
 

@@ -50,13 +50,23 @@ def data_dir(env: Mapping[str, str] | None = None) -> Path | None:
         )
         return None
     base = Path(raw)
-    if not base.is_absolute():
+    if not base.is_absolute() or any(part == ".." for part in base.parts):
         _warn_once(
-            "LOCALAPPDATA is not an absolute path; refusing relative/CWD fallback (D28); "
+            "LOCALAPPDATA is not a clean absolute path; refusing relative/CWD "
+            "fallback (D28); playing without persistence (session-best TOP)"
+        )
+        return None
+    # Canonicalize and re-verify: the app dir must stay a direct child of the
+    # resolved LOCALAPPDATA base (CWE-23 guard; D24 no-user-supplied-paths).
+    base_real = os.path.realpath(raw)
+    target_real = os.path.realpath(os.path.join(base_real, _APP_DIR_NAME))
+    if not target_real.startswith(base_real + os.sep):
+        _warn_once(
+            "LOCALAPPDATA resolves outside itself; refusing (D24/D28); "
             "playing without persistence (session-best TOP)"
         )
         return None
-    target = base / _APP_DIR_NAME
+    target = Path(target_real)
     try:
         target.mkdir(parents=True, exist_ok=True)
     except OSError:
