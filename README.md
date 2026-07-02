@@ -1,11 +1,18 @@
 # Kenjiri
 
+> ## 🎮 [⬇ Download kenjiri.exe — just double-click and play](https://github.com/taurran/kenjiri/releases/latest/download/kenjiri.exe)
+>
+> **One file. No install, no Python, nothing else.** Windows x64.
+> SmartScreen will warn on an unsigned exe — click *More info → Run anyway*.
+> First launch takes ~2 s to unpack. ([All releases](https://github.com/taurran/kenjiri/releases))
+
 A corgi-themed, NES-style falling-block puzzle for Windows — built end-to-end
 as a **KataHarness one-shot showcase** (frozen decision ledger, parallel
-worker waves, adversarial gates). Modern guideline mechanics (7-bag, SRS
-kicks, hold, ghost, hard drop) with NES scoring and pacing, a chibi pixel
-corgi mascot, and a fully synthesized 8-bit soundtrack. Clearing four lines
-at once is a **Kenjiri**.
+worker waves, adversarial gates): **spec → playable, tested, packaged game in
+about an hour**, 230 tests, zero plan drift. Modern guideline mechanics
+(7-bag, SRS kicks, hold, ghost, hard drop) with NES scoring and pacing, a
+chibi pixel corgi mascot, and a fully synthesized 8-bit soundtrack. Clearing
+four lines at once is a **Kenjiri**.
 
 ## Controls
 
