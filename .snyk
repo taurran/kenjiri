@@ -1,0 +1,19 @@
+# Snyk policy — Kenjiri
+# Documented acceptances per D17/D28 fix-and-rescan loop (2026-07-01).
+version: v1.25.0
+ignore:
+  'python/PT':
+    - '*':
+        reason: >
+          Two Low CWE-23 findings, both accepted after hardening. (1)
+          persistence/paths.py: source is %LOCALAPPDATA%, an OS-managed
+          per-user env var; code enforces absolute path, rejects '..'
+          segments, canonicalizes via os.path.realpath and verifies
+          prefix-containment of the app dir. No trust boundary is crossed
+          (single-user offline game running as the same user). (2)
+          tools/make_assets.py: dev-only build CLI whose purpose is writing
+          assets to a caller-chosen directory on the developer's own
+          machine; '..' segments rejected, path canonicalized. Snyk Code
+          does not model custom validation as a python/PT sanitizer, so
+          the flow remains flagged regardless. Re-evaluate at expiry.
+        expires: 2027-01-01T00:00:00.000Z
